@@ -5,6 +5,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TeamArticlesController;
 use App\Http\Controllers\TeamsController;
 use App\Http\Controllers\TeamUsersController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -49,5 +50,10 @@ Route::group(['prefix' => 'articles'], static function () {
     Route::delete('{articleId}', [ArticlesController::class, 'destroy']);
 });
 
+// Admin only
+Route::group(['prefix' => 'users'], static function () {
+    Route::get('', [UsersController::class, 'index']);
+    Route::delete('{userId}', [UsersController::class, 'destroy']);
+});
 
 
