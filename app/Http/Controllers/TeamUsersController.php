@@ -2,70 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TeamsController\StoreRequest;
+use App\Http\Requests\TeamUsersController\UpdateRequest;
 use App\Models\Team;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Response;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
-class TeamsController extends Controller
+class TeamUsersController extends Controller
 {
-    public function index(): Response
-    {
-        try {
-            return response([
-                'status' => ResponseAlias::HTTP_OK,
-                'success' => true,
-                'data' => Team::all() // should list only teams I own/belong to
-            ]);
-        } catch (Exception $exception) {
-            return $this->internalError();
-        }
-    }
-
     public function show(int $teamId): Response
     {
         try {
             $team = Team::find($teamId);
-            $status = $team != null ? ResponseAlias::HTTP_OK : ResponseAlias::HTTP_NOT_FOUND;
+
+            if (!$team instanceof Team) {
+                return response(
+                    [
+                        'status' => ResponseAlias::HTTP_NOT_FOUND,
+                        'success' => false,
+                        'data' => null
+                    ],
+                    ResponseAlias::HTTP_NOT_FOUND
+                );
+            }
 
             return response(
                 [
-                    'status' => $status,
-                    'success' => $team != null,
-                    'data' => $team
-                ],
-                $status
-            );
-        } catch (Exception $exception) {
-            return $this->internalError();
-        }
-    }
-
-    public function store(StoreRequest $request): Response
-    {
-        try {
-            $team = Team::createFromDTO($request->getDTO());
-
-            return response(
-                [
-                    'status' => ResponseAlias::HTTP_CREATED,
+                    'status' => ResponseAlias::HTTP_OK,
                     'success' => true,
-                    'data' => $team
+                    'data' => $team->users
                 ],
-                ResponseAlias::HTTP_CREATED,
-                ['location' => '/teams/' . $team->id]
+                ResponseAlias::HTTP_OK
             );
         } catch (Exception $exception) {
             return $this->internalError();
         }
     }
 
-    public function update(int $teamId, StoreRequest $request): Response
+    public function update(int $teamId, UpdateRequest $request): Response
     {
         try {
             $team = Team::find($teamId);
-
             if (!$team instanceof Team) {
                 return response(
                     [
@@ -77,20 +55,20 @@ class TeamsController extends Controller
                 );
             }
 
-            Team::updateFromDTO($team, $request->getDTO());
-
+            $team->users()->syncWithoutDetaching([$request->getDTO()->getUserId()]);
             return $this->success();
         } catch (Exception $exception) {
             return $this->internalError();
         }
     }
 
-    public function destroy(int $teamId): Response
+    public function destroy(int $teamId, int $userId): Response
     {
         try {
             $team = Team::find($teamId);
+            $user = User::find($userId);
 
-            if (!$team instanceof Team) {
+            if (!$team instanceof Team || !$user instanceof User) {
                 return response(
                     [
                         'status' => ResponseAlias::HTTP_NOT_FOUND,
@@ -101,9 +79,8 @@ class TeamsController extends Controller
                 );
             }
 
-            $team->delete();
+            $team->users()->detach([$userId]);
             return $this->success();
-
         } catch (Exception $exception) {
             return $this->internalError();
         }

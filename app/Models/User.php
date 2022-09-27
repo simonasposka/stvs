@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @property string email
  * @property string password
  * @method static where(string $string, string $string1, string $email)
+ * @method static find(int $userId)
  */
 class User extends Authenticatable
 {
@@ -39,6 +40,10 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'email_verified_at',
+        'created_at',
+        'updated_at',
+        'pivot'
     ];
 
     /**

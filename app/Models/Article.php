@@ -2,33 +2,50 @@
 
 namespace App\Models;
 
+use App\DTOs\ArticlesController\StoreRequestDTO;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @method static find(int $articleId)
+ * @property int $id
+ * @property int $team_id
+ * @property int $user_id
+ * @property string $title
+ * @property string $text
+ */
 class Article extends Model
 {
     use HasFactory;
 
-    public function author(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
-    public function blog(): BelongsTo
+    public function team(): BelongsTo
     {
-        return $this->belongsTo(Blog::class);
+        return $this->belongsTo(Team::class);
     }
 
-    public function categories(): BelongsToMany
+    public static function createFromDTO(StoreRequestDTO $dto): Article
     {
-        return $this->belongsToMany(Category::class);
+        $article = new Article();
+        $article->team_id = $dto->getTeamId();
+        $article->user_id = $dto->getUserId();
+        $article->title = $dto->getTitle();
+        $article->text = $dto->getText();
+        $article->save();
+        return $article;
     }
 
-    public function comments(): HasMany
+    public static function updateFromDTO(Article $article, StoreRequestDTO $dto): void
     {
-        return $this->hasMany(Comment::class);
+        $article->team_id = $dto->getTeamId();
+        $article->user_id = $dto->getUserId();
+        $article->title = $dto->getTitle();
+        $article->text = $dto->getText();
+        $article->save();
     }
 }
