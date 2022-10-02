@@ -1,64 +1,56 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+### **Bendrieji projekto reikalavimai:**
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+- Parengta ir su dėstytoju suderinta projekto užduotis. Minimalūs užduoties apimties reikalavimai:
+    - **bent** **3** taikomosios srities objektai tarpusavyje susieti prasminiu ir hierarchiniu ryšiu (pvz.: namas<-aukštas<-butas);
+        1. team→user→article
+    - **bent 5** sąsajos (API) metodai (4 CRUD metodai ir 1 metodas grąžinantis sąrašą) kiekvienam taikomosios srities objektui;
+        1. team CRUD
+        2. article CRUD
+        3. user index and delete
+    - **bent 3** rolės (pvz.: svečias, rasytojas, administratorius);
+- Programinis sprendimas turi naudoti duomenų bazę;
+- Projektas turi būti realizuotas taikant REST principus;
+- Turi būti realizuota autentifikacija ir autorizacija naudojant OAUTH2 arba JWT (naudojant JWT pasirinkti tinkamą žetonų atnaujinimo strategiją);
+- Parengta grafinė naudotojo sąsaja (GUI);
+- Realizuotas produktas turi būti pasiekiamas saityne, tam panaudojant debesų technologijas.
+- Parengta sukurto programinio produkto dokumentacija: uždavinio aprašymas, architektūros diagrama, sąsajų specifikacija, panaudojimo pavyzdžiai, darbo išvados.
 
-## About Laravel
+## Lab 1
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### **Reikalavimai 1 laboratorinam darbui (atsiskaitymas 2022.10.10 savaitę pagal pasirinktą laiką):**
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Suprojektuoti ir realizuoti REST principais veikiančią API sąsają. Turi būti realizuoti visi užduotyje numatyti API sąsajos metodai!
+- Paruošti programavimo aplinką leidžiančią atsiskaitymo metu patogiai paleisti ir pademonstruoti programą.
+- Duomenų saugojimui turi būti panaudotas pasirinktas DB sprendimas. Gynimo metu DB turi būti užpildyta prasmingais (uždavinį atitinkančiais) duomenimis;
+- Turi būti galimybė iškviesti sąsajos funkcijas (naudojantis naršykle, Postman ar kitu įrankiu) ir gauti teisingai suformuotą atsakymą: prasmingas turinys, teisingas turinio tipas (json, xml, atom, text ar kt.), teisingas atsako kodas (http reponse code);
+- Projekto kodas turi būti laikomas Git saugykloje (github, bitbucket, gitlab ar kt.). Dokumentacija - projektui sukurtame wiki arba projekto kodo Git saugykloje (.readme).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Lab 2
 
-## Learning Laravel
+### **Reikalavimai 2 laboratorinam darbui (atsiskaitymas 2022.11.07 savaitę pagal pasirinktą laiką):**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Realizuotas produktas turi būti pasiekiamas saityne, tam panaudojant debesų technologijas (AWS, Azure, Google Cloud ir kt.);
+- Turi būti realizuota autentifikacja ir autorizacija naudojant OAuth2 arba JWT technologinius sprendimus. Naudotojo rolė turi būti saugoma žetono (token) viduje.
+- Projekto kodas turi būti laikomas Git saugykloje (github, bitbucket, gitlab ar kt.). Dokumentacija - projektui sukurtame wiki arba projekto kodo Git saugykloje (.readme).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Lab 3
 
-## Laravel Sponsors
+### **Reikalavimai 3 laboratorinam darbui (atsiskaitymas 2022.12.05 savaitę pagal pasirinktą laiką)**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Naudotojo sąsajos projektas (projektuojamos sąsajos langų wireframe`ai)
+- Sukurti naudotojo sąsajos sprendimą realizuotam REST API
+- Responsive layout (bent 1 breakpoint`as, pvz. ties 768px)
+- Images prisitaikymas (max-width taisyklė, kad paveikslėlis mažėtų neišlipdamas iš savo konteinerio elemento)
+- Header, Content, Footer srityse stilius turėtų būti skirtingas (specifiškas). Srityse turėtų būti bent po keletą skirtingų elementų. Analogiški elementai skirtingose srityse turėtų įgauti skirtingą išvaizdą.
+- Realizuoti informacijos įvedimo sąsają, bent su keletu skirtingų tipų input elementų.
+- Panaudoti transitions arba animacijas, pagyvinančius naudotojo sąsają (UI)
+- Padarytas responsive meniu (desktop: horizontalūs punktai, mobile: hamburger)
+- Panaudoti vektorines ikonas (webfont, svg).
+- Panaudotas kitoks šriftas (google fonts arba savo sugeneruotas)
+- Panaudoti modalinį langą, kuriame pateikiama aktuali/prasminga informacija.
+- Parinkti tarpusavyje besiderinančias spalvas.
+- UI elementai negali išsimėtyti, išdėstymas turi paklusti tinklelio horizontalioms ir vertikalioms linijoms.
+- Elementų matomumas ir pasiekiamumas neturi būti apsunkintas.
+- Įvedimo formos turi būti aiškios ir nuoseklios.
+- Naudotojo sąsajos grafinis dizainas turi būti vientisas, atitikti projekto užduotį
+- Projekto kodas turi būti laikomas Git saugykloje (github, bitbucket, gitlab ar kt.). Dokumentacija - projektui sukurtame wiki arba projekto kodo Git saugykloje (.readme).
