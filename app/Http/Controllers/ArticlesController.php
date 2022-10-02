@@ -19,7 +19,7 @@ class ArticlesController extends Controller
                 'data' => Article::all()
             ]);
         } catch (Exception $exception) {
-            return $this->internalError();
+            return $this->error();
         }
     }
 
@@ -38,7 +38,7 @@ class ArticlesController extends Controller
                 $status
             );
         } catch (Exception $exception) {
-            return $this->internalError();
+            return $this->error();
         }
     }
 
@@ -56,7 +56,7 @@ class ArticlesController extends Controller
                 ['location' => '/articles/' . $article->id]
             );
         } catch (Exception $exception) {
-            return $this->internalError();
+            return $this->error();
         }
     }
 
@@ -79,7 +79,7 @@ class ArticlesController extends Controller
 
             return $this->success();
         } catch (Exception $exception) {
-            return $this->internalError();
+            return $this->error();
         }
     }
 
@@ -103,7 +103,7 @@ class ArticlesController extends Controller
             return $this->success();
 
         } catch (Exception $exception) {
-            return $this->internalError();
+            return $this->error();
         }
     }
 }

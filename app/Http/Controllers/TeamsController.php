@@ -19,7 +19,7 @@ class TeamsController extends Controller
                 'data' => Team::all() // should list only teams I own/belong to
             ]);
         } catch (Exception $exception) {
-            return $this->internalError();
+            return $this->error();
         }
     }
 
@@ -38,7 +38,7 @@ class TeamsController extends Controller
                 $status
             );
         } catch (Exception $exception) {
-            return $this->internalError();
+            return $this->error();
         }
     }
 
@@ -57,7 +57,7 @@ class TeamsController extends Controller
                 ['location' => '/teams/' . $team->id]
             );
         } catch (Exception $exception) {
-            return $this->internalError();
+            return $this->error();
         }
     }
 
@@ -81,7 +81,7 @@ class TeamsController extends Controller
 
             return $this->success();
         } catch (Exception $exception) {
-            return $this->internalError();
+            return $this->error();
         }
     }
 
@@ -105,7 +105,7 @@ class TeamsController extends Controller
             return $this->success();
 
         } catch (Exception $exception) {
-            return $this->internalError();
+            return $this->error();
         }
     }
 }

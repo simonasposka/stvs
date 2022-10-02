@@ -18,9 +18,6 @@ class StoreRequest extends FormRequest
                 'string',
                 'min:5',
                 'max:255',
-//                'regex:/[a-z]/',      // must contain at least one lowercase letter
-//                'regex:/[A-Z]/',      // must contain at least one uppercase letter
-//                'regex:/[0-9]/',      // must contain at least one digit
             ],
         ];
     }

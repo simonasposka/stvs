@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\DTOs\RegisterController\StoreRequestDTO;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -63,5 +64,26 @@ class User extends Authenticatable
     public static function findByEmail(string $email): ?User
     {
         return self::where('email', '=', $email)->first();
+    }
+
+    public static function updateFromDTO(User $user, StoreRequestDTO $dto): void
+    {
+        $requestName = $dto->getName();
+        $requestEmail = $dto->getEmail();
+        $requestPassword = $dto->getPassword();
+
+        if (strlen($requestName) > 0) {
+            $user->name = $requestName;
+        }
+
+        if (strlen($requestEmail) > 0) {
+            $user->email = $requestEmail;
+        }
+
+        if (strlen($requestPassword) > 0) {
+            $user->password = $requestPassword;
+        }
+
+        $user->save();
     }
 }

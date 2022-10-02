@@ -36,7 +36,7 @@ class TeamUsersController extends Controller
                 ResponseAlias::HTTP_OK
             );
         } catch (Exception $exception) {
-            return $this->internalError();
+            return $this->error();
         }
     }
 
@@ -58,7 +58,7 @@ class TeamUsersController extends Controller
             $team->users()->syncWithoutDetaching([$request->getDTO()->getUserId()]);
             return $this->success();
         } catch (Exception $exception) {
-            return $this->internalError();
+            return $this->error();
         }
     }
 
@@ -82,7 +82,7 @@ class TeamUsersController extends Controller
             $team->users()->detach([$userId]);
             return $this->success();
         } catch (Exception $exception) {
-            return $this->internalError();
+            return $this->error();
         }
     }
 }

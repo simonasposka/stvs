@@ -36,7 +36,7 @@ class TeamArticlesController extends Controller
                 ResponseAlias::HTTP_OK
             );
         } catch (Exception $exception) {
-            return $this->internalError();
+            return $this->error();
         }
     }
 }

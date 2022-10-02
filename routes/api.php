@@ -53,6 +53,7 @@ Route::group(['prefix' => 'articles'], static function () {
 // Admin only
 Route::group(['prefix' => 'users'], static function () {
     Route::get('', [UsersController::class, 'index']);
+    Route::patch('{userId}', [UsersController::class, 'update']);
     Route::delete('{userId}', [UsersController::class, 'destroy']);
 });
 

@@ -24,7 +24,7 @@ class Controller extends BaseController
         );
     }
 
-    protected function internalError(): Response
+    protected function error(): Response
     {
         return response(
             [
