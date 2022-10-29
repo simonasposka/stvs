@@ -79,6 +79,21 @@ class TeamUsersController extends Controller
                 );
             }
 
+            $teamIds = array_map(function($team) {
+                return $team['id'];
+            }, $user->teams->toArray());
+
+            if (!in_array($team->id, $teamIds)) { // User does not belong to the team
+                return response(
+                    [
+                        'status' => ResponseAlias::HTTP_NOT_FOUND,
+                        'success' => false,
+                        'data' => null
+                    ],
+                    ResponseAlias::HTTP_NOT_FOUND
+                );
+            }
+
             $team->users()->detach([$userId]);
             return $this->success();
         } catch (Exception $exception) {

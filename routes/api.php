@@ -4,6 +4,7 @@ use App\Http\Controllers\ArticlesController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TeamArticlesController;
 use App\Http\Controllers\TeamsController;
+use App\Http\Controllers\TeamUserArticlesController;
 use App\Http\Controllers\TeamUsersController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
@@ -27,7 +28,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('register', [RegisterController::class, 'store']);
 
-
 Route::group(['prefix' => 'teams'], static function () {
     Route::get('', [TeamsController::class, 'index']);
     Route::get('{teamId}', [TeamsController::class, 'show']);
@@ -40,6 +40,7 @@ Route::group(['prefix' => 'teams'], static function () {
     Route::delete('{teamId}/users/{userId}', [TeamUsersController::class, 'destroy']); // remove user from team
 
     Route::get('{teamId}/articles', [TeamArticlesController::class, 'show']); // list team's articles
+     Route::get('{teamId}/users/{userId}/articles', [TeamUserArticlesController::class, 'show']); // list articles user wrote for given team
 });
 
 Route::group(['prefix' => 'articles'], static function () {
