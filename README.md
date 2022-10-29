@@ -6,7 +6,7 @@
     - **bent 5** sąsajos (API) metodai (4 CRUD metodai ir 1 metodas grąžinantis sąrašą) kiekvienam taikomosios srities objektui;
         1. team CRUD
         2. article CRUD
-        3. user index and delete
+        3. user CRUD
     - **bent 3** rolės (pvz.: svečias, rasytojas, administratorius);
 - Programinis sprendimas turi naudoti duomenų bazę;
 - Projektas turi būti realizuotas taikant REST principus;
