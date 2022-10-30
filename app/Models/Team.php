@@ -36,10 +36,10 @@ class Team extends Model
         return $this->hasMany(Article::class);
     }
 
-    public static function createFromDTO(StoreRequestDTO $dto): Team
+    public static function createFromDTO(int $userId, StoreRequestDTO $dto): Team
     {
         $team = new Team();
-        $team->user_id = $dto->getUserId();
+        $team->user_id = $userId;
         $team->title = $dto->getTitle();
         $team->description = $dto->getDescription();
         $team->save();
@@ -48,9 +48,20 @@ class Team extends Model
 
     public static function updateFromDTO(Team $team, StoreRequestDTO $dto): void
     {
-        $team->user_id = $dto->getUserId();
         $team->title = $dto->getTitle();
         $team->description = $dto->getDescription();
         $team->save();
+    }
+
+    public static function createTeam(int $id, int $teamCreatorId, string $title, string $description): Team
+    {
+        $team = new Team();
+        $team->id = $id;
+        $team->user_id = $teamCreatorId;
+        $team->title = $title;
+        $team->description = $description;
+
+        $team->save();
+        return $team;
     }
 }

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Response;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use App\Http\Requests\UsersController\StoreRequest;
 
 class UsersController extends Controller
@@ -13,11 +12,7 @@ class UsersController extends Controller
     public function index(): Response
     {
         try {
-            return response([
-                'status' => ResponseAlias::HTTP_OK,
-                'success' => true,
-                'data' => User::all()
-            ]);
+            return $this->success(User::all());
         } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
@@ -29,14 +24,7 @@ class UsersController extends Controller
             $user = User::find($userId);
 
             if (!$user instanceof User) {
-                return response(
-                    [
-                        'status' => ResponseAlias::HTTP_NOT_FOUND,
-                        'success' => false,
-                        'data' => null
-                    ],
-                    ResponseAlias::HTTP_NOT_FOUND
-                );
+                return $this->notFound();
             }
 
             return $this->success([
@@ -54,14 +42,7 @@ class UsersController extends Controller
             $user = User::find($userId);
 
             if (!$user instanceof User) {
-                return response(
-                    [
-                        'status' => ResponseAlias::HTTP_NOT_FOUND,
-                        'success' => false,
-                        'data' => null
-                    ],
-                    ResponseAlias::HTTP_NOT_FOUND
-                );
+                return $this->notFound();
             }
 
             User::updateFromDTO($user, $request->getDTO());
@@ -78,21 +59,16 @@ class UsersController extends Controller
             $user = User::find($userId);
 
             if (!$user instanceof User) {
-                return response(
-                    [
-                        'status' => ResponseAlias::HTTP_NOT_FOUND,
-                        'success' => false,
-                        'data' => null
-                    ],
-                    ResponseAlias::HTTP_NOT_FOUND
-                );
+                return $this->notFound();
             }
 
             $user->delete();
             return $this->success();
 
         } catch (Exception $exception) {
-            return $this->error($exception->getMessage());
+            return $this->error(
+                $exception->getMessage()
+            );
         }
     }
 }

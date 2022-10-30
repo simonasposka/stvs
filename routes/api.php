@@ -4,6 +4,7 @@ use App\Http\Controllers\ArticlesController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\PublicArticlesController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\SeedController;
 use App\Http\Controllers\TeamArticlesController;
 use App\Http\Controllers\TeamsController;
 use App\Http\Controllers\TeamUserArticlesController;
@@ -42,7 +43,7 @@ Route::group(['middleware' => 'jwt'], static function() { // required JWT bearer
         Route::delete('{teamId}/users/{userId}', [TeamUsersController::class, 'destroy']); // remove user from team
 
         Route::get('{teamId}/articles', [TeamArticlesController::class, 'show']); // list team's articles
-         Route::get('{teamId}/users/{userId}/articles', [TeamUserArticlesController::class, 'show']); // list articles user wrote for given team
+        Route::get('{teamId}/users/{userId}/articles', [TeamUserArticlesController::class, 'show']); // list articles user wrote for given team
     });
 
     Route::group(['prefix' => 'articles'], static function () {
@@ -65,3 +66,5 @@ Route::group(['middleware' => 'jwt'], static function() { // required JWT bearer
 // Public
 Route::get('/public/articles', [PublicArticlesController::class, 'index']);
 
+Route::post('seed', [SeedController::class, 'seed']);
+Route::delete('seed', [SeedController::class, 'clear']);

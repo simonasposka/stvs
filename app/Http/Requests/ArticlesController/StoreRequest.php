@@ -13,7 +13,6 @@ class StoreRequest extends FormRequest
     {
         return [
             'team_id' => ['required', 'integer', 'min:0', new isTeamIdValid(), /* TODO: new isUserInTeam() */],
-            'user_id' => ['required', 'integer', 'min:0', new isUserIdValid()],
             'title'   => ['required', 'string', 'min: 1', 'max:255'],
             'text' => ['required', 'string', 'min: 1', 'max:500'],
         ];
@@ -23,7 +22,6 @@ class StoreRequest extends FormRequest
     {
         return [
             'team_id.required' => 'team_id is required',
-            'user_id.required' => 'user_id is required',
             'title.required'   => 'title is required',
             'text.required'   => 'title is required',
         ];
@@ -35,7 +33,6 @@ class StoreRequest extends FormRequest
 
         return new StoreRequestDTO(
             $validated['team_id'],
-            $validated['user_id'],
             $validated['title'],
             $validated['text'],
         );

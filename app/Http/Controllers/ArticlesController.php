@@ -36,11 +36,12 @@ class ArticlesController extends Controller
                 return $user['id'];
             }, $article->team->users->toArray());
 
-            if (!in_array(auth()->user()->getAuthIdentifier(), $users)) {
-                return $this->unauthorized();
+
+            if (auth()->user()->isAdmin() || in_array(auth()->user()->getAuthIdentifier(), $users)) {
+                return $this->success($article->withoutRelations()->load('user'));
             }
 
-            return $this->success($article->withoutRelations()->load('user'));
+            return $this->unauthorized();
         } catch (Exception $exception) {
             return $this->error($exception->getMessage());
         }
@@ -54,7 +55,11 @@ class ArticlesController extends Controller
             }, auth()->user()->teams->toArray());
 
             if (auth()->user()->isAdmin() || in_array($teamId, $myTeamIds)) {
-                $article = Article::createFromDTO($request->getDTO());
+                $article = Article::createFromDTO(
+                    auth()->user()->getAuthIdentifier(),
+                    $request->getDTO()
+                );
+
                 return response(
                     [
                         'status' => ResponseAlias::HTTP_CREATED,
@@ -87,7 +92,6 @@ class ArticlesController extends Controller
                 }
 
                 Article::updateFromDTO($article, $request->getDTO());
-
                 return $this->success();
             }
 

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
@@ -48,7 +49,6 @@ class User extends Authenticatable implements JWTSubject
         'created_at',
         'updated_at',
         'pivot',
-        'is_admin'
     ];
 
     /**
@@ -114,5 +114,18 @@ class User extends Authenticatable implements JWTSubject
     public function isAdmin(): bool
     {
         return $this->is_admin == true;
+    }
+
+    public static function createUser(int $id, string $email, string $name, string $password, bool $isAdmin = false): User
+    {
+        $user = new User();
+        $user->id = $id;
+        $user->email = $email;
+        $user->name = $name;
+        $user->password = Hash::make($password);
+        $user->is_admin = $isAdmin;
+        $user->save();
+
+        return $user;
     }
 }
