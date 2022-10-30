@@ -16,29 +16,38 @@ class TeamsController extends Controller
             return response([
                 'status' => ResponseAlias::HTTP_OK,
                 'success' => true,
-                'data' => Team::all() // should list only teams I own/belong to
+                'data' => auth()->user()->teams
             ]);
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 
     public function show(int $teamId): Response
     {
         try {
+            $myTeams = auth()->user()->teams;
+
+            $teamIds = array_map(function($team) {
+                return $team['id'];
+            }, $myTeams->toArray());
+
+            if (!in_array($teamId, $teamIds)) {
+                return $this->unauthorized();
+            }
+
             $team = Team::find($teamId);
-            $status = $team != null ? ResponseAlias::HTTP_OK : ResponseAlias::HTTP_NOT_FOUND;
 
             return response(
                 [
-                    'status' => $status,
+                    'status' => ResponseAlias::HTTP_OK,
                     'success' => $team != null,
                     'data' => $team
                 ],
-                $status
+                ResponseAlias::HTTP_OK
             );
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 
@@ -77,11 +86,14 @@ class TeamsController extends Controller
                 );
             }
 
-            Team::updateFromDTO($team, $request->getDTO());
+            if ($team->user_id === auth()->user()->getAuthIdentifier() || auth()->user()->isAdmin()) {
+                Team::updateFromDTO($team, $request->getDTO());
+                return $this->success();
+            }
 
-            return $this->success();
+            return $this->unauthorized();
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 
@@ -101,11 +113,14 @@ class TeamsController extends Controller
                 );
             }
 
-            $team->delete();
-            return $this->success();
+            if ($team->user_id === auth()->user()->getAuthIdentifier() || auth()->user()->isAdmin()) {
+                $team->delete();
+                return $this->success();
+            }
 
+            return $this->unauthorized();
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 }

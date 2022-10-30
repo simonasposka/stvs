@@ -19,7 +19,32 @@ class UsersController extends Controller
                 'data' => User::all()
             ]);
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
+        }
+    }
+
+    public function show(int $userId): Response
+    {
+        try {
+            $user = User::find($userId);
+
+            if (!$user instanceof User) {
+                return response(
+                    [
+                        'status' => ResponseAlias::HTTP_NOT_FOUND,
+                        'success' => false,
+                        'data' => null
+                    ],
+                    ResponseAlias::HTTP_NOT_FOUND
+                );
+            }
+
+            return $this->success([
+                'teams' => $user->teams,
+                'articles' => $user->articles
+            ]);
+        } catch (Exception $ex) {
+            return $this->error($ex->getMessage());
         }
     }
 
@@ -43,7 +68,7 @@ class UsersController extends Controller
 
             return $this->success();
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 
@@ -67,7 +92,7 @@ class UsersController extends Controller
             return $this->success();
 
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 }

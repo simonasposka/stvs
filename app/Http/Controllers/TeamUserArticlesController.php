@@ -13,6 +13,10 @@ class TeamUserArticlesController extends Controller
     public function show(int $teamId, int $userId): Response
     {
         try {
+            if (!auth()->user()->isAdmin() && auth()->user()->getAuthIdentifier() != $userId) {
+                return $this->unauthorized();
+            }
+
             $team = Team::find($teamId);
             $user = User::find($userId);
 
@@ -29,17 +33,10 @@ class TeamUserArticlesController extends Controller
 
             $teamIds = array_map(function($team) {
                 return $team['id'];
-            }, $user->teams->toArray());
+            }, auth()->user()->teams->toArray());
 
-            if (!in_array($team->id, $teamIds)) { // User does not belong to the team
-                return response(
-                    [
-                        'status' => ResponseAlias::HTTP_NOT_FOUND,
-                        'success' => false,
-                        'data' => null
-                    ],
-                    ResponseAlias::HTTP_NOT_FOUND
-                );
+            if (!auth()->user()->isAdmin() && !in_array($team->id, $teamIds)) { // User does not belong to the team
+                return $this->unauthorized();
             }
 
             return response(
@@ -51,7 +48,7 @@ class TeamUserArticlesController extends Controller
                 ResponseAlias::HTTP_OK
             );
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 }

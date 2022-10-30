@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Builder;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 /**
  * @property int id
@@ -17,10 +17,11 @@ use Illuminate\Database\Eloquent\Builder;
  * @property string email
  * @property string password
  * @property mixed $teams
+ * @property boolean $is_admin
  * @method static where(string $string, string $string1, string $email)
  * @method static find(int $userId)
  */
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -46,7 +47,8 @@ class User extends Authenticatable
         'email_verified_at',
         'created_at',
         'updated_at',
-        'pivot'
+        'pivot',
+        'is_admin'
     ];
 
     /**
@@ -97,5 +99,20 @@ class User extends Authenticatable
         }
 
         $user->save();
+    }
+
+    public function getJWTIdentifier(): mixed
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims(): array
+    {
+        return [];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->is_admin == true;
     }
 }
