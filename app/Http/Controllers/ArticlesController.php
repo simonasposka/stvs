@@ -13,13 +13,13 @@ class ArticlesController extends Controller
     public function index(): Response
     {
         try {
-            return response([
-                'status' => ResponseAlias::HTTP_OK,
-                'success' => true,
-                'data' => Article::all()
-            ]);
+            if (auth()->user()->isAdmin()) {
+                return $this->success(Article::all());
+            }
+
+            return $this->success(auth()->user()->articles);
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 
@@ -27,59 +27,77 @@ class ArticlesController extends Controller
     {
         try {
             $article = Article::find($articleId);
-            $status = $article != null ? ResponseAlias::HTTP_OK : ResponseAlias::HTTP_NOT_FOUND;
 
-            return response(
-                [
-                    'status' => $status,
-                    'success' => $article != null,
-                    'data' => $article
-                ],
-                $status
-            );
+            if (!$article instanceof Article) {
+                return $this->notFound();
+            }
+
+            $users = array_map(function($user) {
+                return $user['id'];
+            }, $article->team->users->toArray());
+
+
+            if (auth()->user()->isAdmin() || in_array(auth()->user()->getAuthIdentifier(), $users)) {
+                return $this->success($article->withoutRelations()->load('user'));
+            }
+
+            return $this->unauthorized();
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 
     public function store(StoreRequest $request): Response {
         try {
-            $article = Article::createFromDTO($request->getDTO());
+            $teamId = $request->getDTO()->getTeamId();
+            $myTeamIds = array_map(function($team) {
+                return $team['id'];
+            }, auth()->user()->teams->toArray());
 
-            return response(
-                [
-                    'status' => ResponseAlias::HTTP_CREATED,
-                    'success' => true,
-                    'data' => $article
-                ],
-                ResponseAlias::HTTP_CREATED,
-                ['location' => '/articles/' . $article->id]
-            );
+            if (auth()->user()->isAdmin() || in_array($teamId, $myTeamIds)) {
+                $article = Article::createFromDTO(
+                    auth()->user()->getAuthIdentifier(),
+                    $request->getDTO()
+                );
+
+                return response(
+                    [
+                        'status' => ResponseAlias::HTTP_CREATED,
+                        'success' => true,
+                        'data' => $article
+                    ],
+                    ResponseAlias::HTTP_CREATED,
+                    ['location' => '/articles/' . $article->id]
+                );
+            }
+
+            return $this->unauthorized();
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 
     public function update(int $articleId, StoreRequest $request): Response {
         try {
-            $article = Article::find($articleId);
+            $teamId = $request->getDTO()->getTeamId();
+            $myTeamIds = array_map(function($team) {
+                return $team['id'];
+            }, auth()->user()->teams->toArray());
 
-            if (!$article instanceof Article) {
-                return response(
-                    [
-                        'status' => ResponseAlias::HTTP_NOT_FOUND,
-                        'success' => false,
-                        'data' => null
-                    ],
-                    ResponseAlias::HTTP_NOT_FOUND
-                );
+            if (auth()->user()->isAdmin() || in_array($teamId, $myTeamIds)) {
+                $article = Article::find($articleId);
+
+                if (!$article instanceof Article) {
+                    return $this->notFound();
+                }
+
+                Article::updateFromDTO($article, $request->getDTO());
+                return $this->success();
             }
 
-            Article::updateFromDTO($article, $request->getDTO());
-
-            return $this->success();
+            return $this->unauthorized();
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 
@@ -89,21 +107,21 @@ class ArticlesController extends Controller
             $article = Article::find($articleId);
 
             if (!$article instanceof Article) {
-                return response(
-                    [
-                        'status' => ResponseAlias::HTTP_NOT_FOUND,
-                        'success' => false,
-                        'data' => null
-                    ],
-                    ResponseAlias::HTTP_NOT_FOUND
-                );
+                return $this->notFound();
             }
 
-            $article->delete();
-            return $this->success();
+            $myTeamIds = array_map(function($team) {
+                return $team['id'];
+            }, auth()->user()->teams->toArray());
 
+            if (auth()->user()->isAdmin() || in_array($article->team_id, $myTeamIds)) {
+                $article->delete();
+                return $this->success();
+            }
+
+            return $this->unauthorized();
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 }

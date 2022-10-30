@@ -11,7 +11,6 @@ class StoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['required', 'integer', 'min:0', new isUserIdValid()],
             'title'   => ['required', 'string', 'min: 1', 'max:255'],
             'description' => ['sometimes', 'string', 'nullable', 'max:500'],
         ];
@@ -20,7 +19,6 @@ class StoreRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'user_id.required' => 'user_id is required',
             'title.required'   => 'title is required',
         ];
     }
@@ -30,7 +28,6 @@ class StoreRequest extends FormRequest
         $validated = $this->validated();
 
         return new StoreRequestDTO(
-            $validated['user_id'],
             $validated['title'],
             $validated['description'] ?? '',
         );

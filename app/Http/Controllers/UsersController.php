@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Response;
-use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 use App\Http\Requests\UsersController\StoreRequest;
 
 class UsersController extends Controller
@@ -13,13 +12,27 @@ class UsersController extends Controller
     public function index(): Response
     {
         try {
-            return response([
-                'status' => ResponseAlias::HTTP_OK,
-                'success' => true,
-                'data' => User::all()
-            ]);
+            return $this->success(User::all());
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
+        }
+    }
+
+    public function show(int $userId): Response
+    {
+        try {
+            $user = User::find($userId);
+
+            if (!$user instanceof User) {
+                return $this->notFound();
+            }
+
+            return $this->success([
+                'teams' => $user->teams,
+                'articles' => $user->articles
+            ]);
+        } catch (Exception $ex) {
+            return $this->error($ex->getMessage());
         }
     }
 
@@ -29,21 +42,14 @@ class UsersController extends Controller
             $user = User::find($userId);
 
             if (!$user instanceof User) {
-                return response(
-                    [
-                        'status' => ResponseAlias::HTTP_NOT_FOUND,
-                        'success' => false,
-                        'data' => null
-                    ],
-                    ResponseAlias::HTTP_NOT_FOUND
-                );
+                return $this->notFound();
             }
 
             User::updateFromDTO($user, $request->getDTO());
 
             return $this->success();
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 
@@ -53,21 +59,16 @@ class UsersController extends Controller
             $user = User::find($userId);
 
             if (!$user instanceof User) {
-                return response(
-                    [
-                        'status' => ResponseAlias::HTTP_NOT_FOUND,
-                        'success' => false,
-                        'data' => null
-                    ],
-                    ResponseAlias::HTTP_NOT_FOUND
-                );
+                return $this->notFound();
             }
 
             $user->delete();
             return $this->success();
 
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error(
+                $exception->getMessage()
+            );
         }
     }
 }

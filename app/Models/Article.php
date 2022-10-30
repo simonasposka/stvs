@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $user_id
  * @property string $title
  * @property string $text
+ * @property string|null $thumbnail
  */
 class Article extends Model
 {
@@ -29,11 +30,11 @@ class Article extends Model
         return $this->belongsTo(Team::class);
     }
 
-    public static function createFromDTO(StoreRequestDTO $dto): Article
+    public static function createFromDTO(int $userId, StoreRequestDTO $dto): Article
     {
         $article = new Article();
         $article->team_id = $dto->getTeamId();
-        $article->user_id = $dto->getUserId();
+        $article->user_id = $userId;
         $article->title = $dto->getTitle();
         $article->text = $dto->getText();
         $article->save();
@@ -43,9 +44,28 @@ class Article extends Model
     public static function updateFromDTO(Article $article, StoreRequestDTO $dto): void
     {
         $article->team_id = $dto->getTeamId();
-        $article->user_id = $dto->getUserId();
         $article->title = $dto->getTitle();
         $article->text = $dto->getText();
         $article->save();
+    }
+
+    public static function createArticle(
+        int $id,
+        int $userId,
+        int $teamId,
+        string $title,
+        string $text,
+        ?string $thumbnail = null
+    ): Article
+    {
+        $article = new Article();
+        $article->id = $id;
+        $article->user_id = $userId;
+        $article->team_id = $teamId;
+        $article->title = $title;
+        $article->text = $text;
+        $article->thumbnail = $thumbnail;
+        $article->save();
+        return $article;
     }
 }

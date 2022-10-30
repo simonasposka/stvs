@@ -13,39 +13,47 @@ class TeamsController extends Controller
     public function index(): Response
     {
         try {
-            return response([
-                'status' => ResponseAlias::HTTP_OK,
-                'success' => true,
-                'data' => Team::all() // should list only teams I own/belong to
-            ]);
+            if (auth()->user()->isAdmin()) {
+                return $this->success(Team::all());
+            }
+
+            return $this->success(auth()->user()->teams);
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 
     public function show(int $teamId): Response
     {
         try {
-            $team = Team::find($teamId);
-            $status = $team != null ? ResponseAlias::HTTP_OK : ResponseAlias::HTTP_NOT_FOUND;
+            $myTeams = auth()->user()->teams;
 
-            return response(
-                [
-                    'status' => $status,
-                    'success' => $team != null,
-                    'data' => $team
-                ],
-                $status
-            );
+            $teamIds = array_map(function($team) {
+                return $team['id'];
+            }, $myTeams->toArray());
+
+            if (auth()->user()->isAdmin() || in_array($teamId, $teamIds)) {
+                $team = Team::find($teamId);
+                if (!$team instanceof Team) {return $this->notFound();}
+                return $this->success($team);
+            }
+
+            return $this->unauthorized();
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 
     public function store(StoreRequest $request): Response
     {
         try {
-            $team = Team::createFromDTO($request->getDTO());
+            $userId = auth()->user()->getAuthIdentifier();
+            $team = Team::createFromDTO(
+                $userId,
+                $request->getDTO()
+            );
+
+            $team->users()->syncWithoutDetaching([$userId]);
 
             return response(
                 [
@@ -57,7 +65,9 @@ class TeamsController extends Controller
                 ['location' => '/teams/' . $team->id]
             );
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error(
+                $exception->getMessage()
+            );
         }
     }
 
@@ -67,21 +77,24 @@ class TeamsController extends Controller
             $team = Team::find($teamId);
 
             if (!$team instanceof Team) {
-                return response(
-                    [
-                        'status' => ResponseAlias::HTTP_NOT_FOUND,
-                        'success' => false,
-                        'data' => null
-                    ],
-                    ResponseAlias::HTTP_NOT_FOUND
-                );
+                return $this->notFound();
             }
 
-            Team::updateFromDTO($team, $request->getDTO());
+            if (
+                $team->user_id === auth()->user()->getAuthIdentifier() ||
+                auth()->user()->isAdmin()
+            ) {
+                Team::updateFromDTO(
+                    $team,
+                    $request->getDTO()
+                );
 
-            return $this->success();
+                return $this->success();
+            }
+
+            return $this->unauthorized();
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 
@@ -91,21 +104,17 @@ class TeamsController extends Controller
             $team = Team::find($teamId);
 
             if (!$team instanceof Team) {
-                return response(
-                    [
-                        'status' => ResponseAlias::HTTP_NOT_FOUND,
-                        'success' => false,
-                        'data' => null
-                    ],
-                    ResponseAlias::HTTP_NOT_FOUND
-                );
+                return $this->notFound();
             }
 
-            $team->delete();
-            return $this->success();
+            if ($team->user_id === auth()->user()->getAuthIdentifier() || auth()->user()->isAdmin()) {
+                $team->delete();
+                return $this->success();
+            }
 
+            return $this->unauthorized();
         } catch (Exception $exception) {
-            return $this->error();
+            return $this->error($exception->getMessage());
         }
     }
 }
